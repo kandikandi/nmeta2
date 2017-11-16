@@ -3,8 +3,8 @@
 #
 tc_policies:
     # Traffic Classification Policies:
-    'Basic TC Use Case':
-        comment: Basic TC Use Case
+    'Flow Classification':
+        comment: Policy for traffic classification via flows
         rule_set: tc_ruleset_1
         port_set: all_access_ports
         mode: active
@@ -12,23 +12,16 @@ tc_policies:
 tc_rules:
     # Traffic Classification Rulesets and Rules
     tc_ruleset_1:
-        - comment: Constrained Bandwidth Traffic
+        - comment: Flow Classification using Neural Network
           match_type: any
           conditions_list:
               - match_type: any
-                tcp_src: 1234
-                tcp_dst: 1234
-          actions:
-            set_qos: constrained_bw
-            set_desc: description="Constrained Bandwidth Traffic"
-        - comment: Constrained Bandwidth Traffic (Statistical)
-          match_type: any
-          conditions_list:
-              - match_type: any
-                statistical: 'statistical_qos_bandwidth_1'
+#                statistical: "random_forest_classifier"
+#                statistical: "nn_traffic_classifier"
+                 statistical: "payload_uri_1"
           actions:
             set_qos: classifier_return
-            set_desc: description="Statistical TC Control of Traffic QoS Treatment"
+            set_desc: description="Classification of Application Traffic"
 #
 identity:
     # Control how identity information is collected
@@ -36,18 +29,19 @@ identity:
     # ports on which to run it
     #
     # Turn this on to collect ARP MAC address to IPv4 address mappings:
-    arp: 1
+    arp: 0
     #
     # Turn this on to collect Link Layer Discovery Protocol information:
-    lldp: 1
+    lldp: 0
     #
     # Turn this on to collect DNS reply data matching services to IP addresses:
-    dns: 1
+    dns: 0
     #
     # Turn this on to collect DHCP information about address allocations and
     # hostnames:
-    dhcp: 1
+    dhcp: 0
 #
+
 qos_treatment:
     # Control Quality of Service (QoS) treatment mapping of
     #  names to output queue numbers:
@@ -56,16 +50,11 @@ qos_treatment:
     high_priority: 2
     low_priority: 3
 #
+
 port_sets:
     # Port Sets control what data plane ports policies and
     #  features are applied on:
     all_access_ports:
-        - 'sw1-bordeaux':
-            DPID: 1
-            ports: 1-3,5,66
-        - 'swn-bordeaux':
-            DPID: 255
-            ports: 3,5
-        - 'Switch 1':
-            DPID: 8796748549206
-            ports: 1-5
+        - 'atx_switch':
+            DPID: 246406201076215
+            ports: 23
